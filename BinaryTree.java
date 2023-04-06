@@ -160,7 +160,7 @@ public class BinaryTree<T extends Comparable<T>> {
     }
    
     protected void visit(BTNode<T> p) {
-        System.out.print(p.data + " ");
+        System.out.print(p.data + "\n");
     }
 
     public void inorderTraversal(){     

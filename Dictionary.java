@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.lang.invoke.TypeDescriptor;
 import java.util.Scanner;
 
 public class Dictionary {
@@ -25,15 +27,39 @@ public class Dictionary {
             Scanner fileInput = new Scanner(f);
             while(fileInput.hasNext()){
                 String word = fileInput.next();
-                dictionary.insert(word);
+                try{
+                    addWord(word);
+                }catch(WordAlreadyExistsException exception){
+                    continue;
+                }
+                
             }
             fileInput.close();
-        }catch(Exception e){
+        }catch(FileNotFoundException e){
             System.out.println(e.getMessage());
         }
     }
 
     public void print() {
-       dictionary.printTree();
+       dictionary.levelOrderTraversal();
+    }
+
+    public void addWord(String s) throws WordAlreadyExistsException{
+        try{
+            dictionary.insert(s);
+        }catch(Exception e){
+            throw new WordAlreadyExistsException("The word %s is already inside the dictionary".formatted(s));
+        }
+    }
+    public boolean findWord(String s){
+        return dictionary.search(s);
+    }
+    public void deleteWord(String s) throws WordNotFoundException{
+        try{
+            dictionary.deleteAVL(s);
+        }catch(Exception e){
+            throw new WordNotFoundException("The word %s is not found in the dictionary".formatted(s));
+        }
+        
     }
 }
