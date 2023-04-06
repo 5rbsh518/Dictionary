@@ -52,7 +52,7 @@ public class BinaryTree<T extends Comparable<T>> {
     }
     
     // delete by copying last node
-    public void deleteByCopying(T data){
+    public void deleteByCopying(T data) throws Exception{
          if(root == null)
             throw new UnsupportedOperationException("Tree is empty!");
          else if(root.left == null && root.right == null){

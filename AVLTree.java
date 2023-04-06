@@ -49,7 +49,7 @@ public class AVLTree<T extends Comparable<T>> extends BST<T> {
       this.balance();
     }
     
-    public void deleteAVL(T el) {
+    public void deleteAVL(T el) throws Exception{
       // to be completed by students
 	  deleteByCopying(el);
      balance();   
