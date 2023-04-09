@@ -1,28 +1,85 @@
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import java.util.Queue;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Scanner;
+
+import javax.xml.catalog.Catalog;
+
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.lang.invoke.CallSite;
 
 public class Dictionary {
     AVLTree<String> dictionary;
 
     public static void main(String[] args) {
-        File f = new File("Dictionary.txt");
-        Dictionary dictionary = new Dictionary(f);
-        try{
-            dictionary.addWord("printer");
-            dictionary.addWord("painter");
-            dictionary.addWord("pointer");
-            dictionary.addWord("punter");
-        }catch(Exception e){
-            System.out.println(e.getMessage());
+        Dictionary dictionary = new Dictionary();
+        Scanner scanner = new Scanner(System.in);
+        int numInput;
+        String stringInput;
+        String[] similarWords;
+        System.out.println("Please selecte one of these methods:\n1.  Load the dictionary from a file\n2.  find a word in the dictionary.\n3.  add words to the dictionary.\n4.  Remove words to the dictionary. \n5.  search for similar words to a word in the dictionary.\n6.  save the updated dictionary as a text file.\n7.  Exit. \n (Enter the digit left to the method to use it)");
+        numInput = scanner.nextInt();
+        while(numInput != 7){
+            switch(numInput){
+                case 1:
+                    System.out.println("Enter filename> ");
+                    stringInput = scanner.next();
+                    File f = new File(stringInput);
+                    dictionary.loadFile(f);
+                    System.out.println("dictionary loaded successfully.");
+                    break;
+                case 2:
+                    System.out.println("check word>  ");
+                    stringInput = scanner.next();
+                    stringInput = (dictionary.findWord(stringInput)) ? "%s, was found".formatted(stringInput): "%s, wasn't found".formatted(stringInput);
+                    System.out.println(stringInput);
+                    break;
+                case 3:
+                    System.out.println("add new word> ");
+                    stringInput = scanner.next();
+                    try{
+                        dictionary.addWord(stringInput);
+                        System.out.println("%s added successfully.".formatted(stringInput));
+                    }catch(WordAlreadyExistsException e){
+                        System.out.println(e.getMessage());
+                    }
+                    break;
+                case 4:
+                    System.out.println("remove word>  ");
+                    stringInput = scanner.next();
+                    try{
+                        dictionary.deleteWord(stringInput);
+                        System.out.println("%s removed successfully.".formatted(stringInput));
+                    }catch(WordNotFoundException e){
+                        System.out.println(e.getMessage());
+                    }
+                    break;
+                case 5:
+                    System.out.println("search for similar words>   ");
+                    stringInput = scanner.next();
+                    similarWords = dictionary.findSimilar(stringInput);
+                    System.out.println(Arrays.toString(similarWords));
+                    break;
+                case 6:
+                    System.out.println("Save Updated Dictionary (Y/N)>   ");
+                    stringInput = scanner.next();
+                    if(stringInput.equals("Y")){
+                        System.out.println("Enter filename> ");
+                        stringInput = scanner.next();
+                        dictionary.saveDictionary(stringInput);
+                        System.out.println("Dictionary saved successfully.");
+                        break;
+                    }else{
+                        System.out.println("Returning");
+                        break;
+                    }
+            }
+            System.out.println("Please selecte one of these methods:\n1.  Load the dictionary from a file\n2.  find a word in the dictionary.\n3.  add words to the dictionary.\n4.  Remove words to the dictionary. \n5.  search for similar words to a word in the dictionary.\n6.  save the updated dictionary as a text file.\n7.  Exit. \n (Enter the digit left to the method to use it)");
+            numInput = scanner.nextInt();
         }
-        String[] similar = dictionary.findSimilar("puinter");
-        System.out.println(Arrays.toString(similar));
-        
-    }
+        scanner.close();
+    }    
+
 
     public Dictionary(String s) {
         dictionary = new AVLTree<>();
@@ -34,6 +91,12 @@ public class Dictionary {
     }
 
     public Dictionary(File f) {
+        dictionary = new AVLTree<>();
+        loadFile(f);
+
+    }
+
+    public void loadFile(File f){// overwrite the exisitng dictionary.
         dictionary = new AVLTree<>();
         try {
             Scanner fileInput = new Scanner(f);
@@ -79,18 +142,18 @@ public class Dictionary {
 
     public String[] findSimilar(String s) {
         String similarWords = "";
-        Queue<BTNode> queue = new LinkedList<BTNode>();
+        Queue<BTNode> queue = new Queue<>();
         BTNode node = dictionary.root;
-        queue.add(node); 
+        queue.enqueue(node); 
         while(! queue.isEmpty()){
-           node = queue.poll();
+           node = queue.dequeue();
            if(this.similarWords(s,(String) node.data)) similarWords += " " + node.data;
            if(node.left != null)
-              queue.add(node.left);
+              queue.enqueue(node.left);
            if(node.right != null)
-              queue.add(node.right);
+              queue.enqueue(node.right);
         } 
-        return similarWords.split(" ");
+        return similarWords.substring(1).split(" ");
     }
 
     private boolean similarWords(String s1, String s2) {
@@ -126,7 +189,22 @@ public class Dictionary {
         }
         return true;
     }
-    public void saveDictionary(){
-
+    public void saveDictionary(String fileName){
+        Queue<BTNode> queue = new Queue<>();
+        File f = new File(fileName);
+        try(PrintWriter printWriter = new PrintWriter(f);){
+            BTNode node = dictionary.root;
+            queue.enqueue(node); 
+            while(! queue.isEmpty()){
+               node = queue.dequeue();
+               printWriter.printf("%s\n", node.data);
+               if(node.left != null)
+                  queue.enqueue(node.left);
+               if(node.right != null)
+                  queue.enqueue(node.right);
+            } 
+        }catch(FileNotFoundException e){
+            System.out.println(e.getMessage());
+        }
     }
 }
