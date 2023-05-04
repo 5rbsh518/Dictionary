@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "maxHeapTest",
+            "request": "launch",
+            "mainClass": "maxHeapTest",
+            "projectName": "Dictionary_2516e8bc"
+        },
+        {
+            "type": "java",
+            "name": "BinaryHeap",
+            "request": "launch",
+            "mainClass": "BinaryHeap",
+            "projectName": "Dictionary_2516e8bc"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

@@ -24574,6 +24574,9 @@ palatine
 palazzo
 paleolithic
 pointer
+printer
+puinter
+punter
 volt
 voltage
 voltaire
@@ -24977,3 +24980,4 @@ zippy
 zoroaster
 zurich
 zzzzzzzzzz
+painter

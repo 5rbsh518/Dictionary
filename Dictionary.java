@@ -2,11 +2,11 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+import javax.swing.text.html.HTMLDocument.BlockElement;
 import javax.xml.catalog.Catalog;
-
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.lang.invoke.CallSite;
 
 public class Dictionary {
     AVLTree<String> dictionary;
@@ -22,11 +22,16 @@ public class Dictionary {
         while(numInput != 7){
             switch(numInput){
                 case 1:
+                    
                     System.out.println("Enter filename> ");
                     stringInput = scanner.next();
                     File f = new File(stringInput);
+                    long startTime = System.nanoTime();
                     dictionary.loadFile(f);
+                    long endTime = System.nanoTime();
                     System.out.println("dictionary loaded successfully.");
+                    long timeElapsed = endTime - startTime;
+                    System.out.println(timeElapsed/1000000000);
                     break;
                 case 2:
                     System.out.println("check word>  ");
@@ -157,35 +162,28 @@ public class Dictionary {
     }
 
     private boolean similarWords(String s1, String s2) {
-        boolean diff = false;
-        if(s1.equals(s2)){
+        if(s1.equals(s2)){//Inital conditions *These conditions fast up the alogrithim*U 
             return false;
         }
         if (Math.abs(s1.length() - s2.length()) > 1) {
             return false;
         }
-        if (s1.length() == s2.length()) {
-            for (int i = 0; i < s1.length(); ++i) {
-                if (diff) {
-                    if (s1.charAt(i) != s2.charAt(i))
-                        return false;
-                } else {
-                    if (s1.charAt(i) != s2.charAt(i))
-                        diff = true;
-                }
-            }
-        } else {
-            String longer = (s1.length() > s2.length()) ? s1 : s2;
-            String shorter = (s1.length() > s2.length()) ? s2 : s1;
-            for (int i = 0; i < shorter.length(); ++i) {
-                if (diff) {
-                    if(longer.charAt(i) != shorter.charAt(i-1)) return false;
+        boolean diff = false;
+        String longer = (s1.length() > s2.length()) ? s1.toLowerCase() : s2.toLowerCase();
+        String shorter = (s1.length() > s2.length()) ? s2.toLowerCase() : s1.toLowerCase();
+        int sizediff = longer.length() - shorter.length();
+        for (int i = 0; i < longer.length(); ++i) {
+                if (diff){
+                    if (longer.charAt(i) != shorter.charAt(i - sizediff)) return false;
                 } 
-                else {
-                    if(longer.charAt(i) != shorter.charAt(i)) diff = true;
+                else{
+                    try{
+                        if(longer.charAt(i) != shorter.charAt(i)) diff = true;
+                    }catch(Exception exception){
+                        return true;
+                    }
                 }
-
-            }
+                    
         }
         return true;
     }
