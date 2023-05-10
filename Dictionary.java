@@ -1,10 +1,6 @@
 import java.io.File;
 import java.util.Arrays;
 import java.util.Scanner;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
-import javax.swing.text.html.HTMLDocument.BlockElement;
-import javax.xml.catalog.Catalog;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
@@ -35,7 +31,7 @@ public class Dictionary {
                     break;
                 case 2:
                     System.out.println("check word>  ");
-                    stringInput = scanner.next();
+                    stringInput = scanner.nextLine();
                     stringInput = (dictionary.findWord(stringInput)) ? "%s, was found".formatted(stringInput): "%s, wasn't found".formatted(stringInput);
                     System.out.println(stringInput);
                     break;
